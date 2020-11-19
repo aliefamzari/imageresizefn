@@ -27,13 +27,15 @@ EOF
          help "error: unknown option $1. Try "-h" "
  fi
 
+# Check file type
 identify $1 &> /dev/null
 filetype=$(echo $?)
 if [ $filetype = 1 ]; then
         echo "error - uknown filetype"
         exit 1
 else
-magick convert -resize $2% $1 resized$2_$1
+        #Converting the image
+        magick convert -resize $2% $1 resized$2_$1
 fi
 
 
