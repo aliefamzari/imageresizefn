@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+
+# Use imagemagick conversion to convert image. 
+
 function help {
         if [ -n "${1}" ]; then
               echo "${1}"
@@ -24,14 +27,19 @@ EOF
  if [ "${1}" == '-h' ]; then
          help
  elif [ "${1:0:1}" == '' ]; then
-         help "error: unknown option $1. Try "-h" "
+         echo "Error: unknown option $1. Try \"-h\" "
+         exit 0
  fi
-
+ # Check if imagemagick is install
+ if [ ! "$(command -v magick)" ]; then
+            echo "Could not find Imagemagick. Kindly install from your package manager"
+        exit 1
+ fi
 # Check file type
 identify $1 &> /dev/null
 filetype=$(echo $?)
 if [ $filetype = 1 ]; then
-        echo "error - uknown filetype"
+        echo "Error - Unknown filetype or bad filename. Try \"-h\" "
         exit 1
 else
         #Converting the image
