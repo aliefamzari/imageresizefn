@@ -24,10 +24,16 @@ EOF
  if [ "${1}" == '-h' ]; then
          help
  elif [ "${1:0:1}" == '' ]; then
-         help
+         help "error: unknown option $1. Try "-h" "
  fi
 
+identify $1 &> /dev/null
+filetype=$(echo $?)
+if [ $filetype = 1 ]; then
+        echo "error - uknown filetype"
+        exit 1
+else
 magick convert -resize $2% $1 resized$2_$1
-
+fi
 
 
