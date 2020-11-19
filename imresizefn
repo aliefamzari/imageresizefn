@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+function help {
+        if [ -n "${1}" ]; then
+              echo "${1}"
+        fi
+        cat <<-EOF
+
+        Usage: resize [filename] [value in percent without % symbol] 
+
+        Downsize image in percentage of original image. Output filename
+        will in format of resized[percentage]_[originalfilename].
+
+                -h      - print help and exit
+
+EOF
+
+        if [ -n "${1}" ]; then
+                exit 1
+        fi
+        exit 0
+}
+
+ if [ "${1}" == '-h' ]; then
+         help
+ elif [ "${1:0:1}" == '' ]; then
+         help
+ fi
+
+magick convert -resize $2% $1 resized$2_$1
+
+
+
