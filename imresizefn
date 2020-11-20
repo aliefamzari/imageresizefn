@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-
-
-# Use imagemagick conversion to convert image. 
+#Use imagemagick conversion to quickly resized image by percentage, and output on the same dir. No overwriting to original image. 
+#Author: Alif Amzari Mohd Azamee
+#ToDo - $2 input check
 
 function help {
         if [ -n "${1}" ]; then
@@ -9,41 +9,53 @@ function help {
         fi
         cat <<-EOF
 
-        Usage: resize [filename] [value in percent without % symbol] 
+        Usage: imresizefn [filename] [value in percent without % symbol] 
 
-        Downsize image in percentage of original image. Output filename
-        will in format of resized[percentage]_[originalfilename].
+        Resize image in percentage of original image. Output filename
+        will be in the format of resized[percentage]_[originalfilename].
 
                 -h      - print help and exit
 
 EOF
-
         if [ -n "${1}" ]; then
                 exit 1
         fi
         exit 0
 }
 
- if [ "${1}" == '-h' ]; then
-         help
- elif [ "${1:0:1}" == '' ]; then
-         echo "Error: unknown option $1. Try \"-h\" "
-         exit 0
- fi
- # Check if imagemagick is install
- if [ ! "$(command -v magick)" ]; then
+if [ "${1}" == '-h' ]; then
+        help
+elif [ "${1:0:1}" == '' ]; then
+        echo "Error: Unknown option $1. Try \"-h\" "
+        exit 0
+fi
+
+#Check if imagemagick is install
+if [ ! "$(command -v magick)" ]; then
             echo "Could not find Imagemagick. Kindly install from your package manager"
         exit 1
- fi
-# Check file type
+fi
+
+#Check file type is image or not
 identify $1 &> /dev/null
 filetype=$(echo $?)
-if [ $filetype = 1 ]; then
+if [ "${filetype}" = 1 ]; then
         echo "Error - Unknown filetype or bad filename. Try \"-h\" "
         exit 1
+
+#If absolutepath is given, reconstruct output filename
+elif [[ "${1}" = /* ]]; then
+        filename=$(basename -- "$1")
+        dirname=$(dirname -- "$1")
+        extension="${filename##*.}"
+        filename="${filename%.*}"
+        magick convert -resize $2% $1 $dirname/resized$2_$filename.$extension
+        echo "Image resized to $2%"
+
+#Otherwise convert using filename given
 else
-        #Converting the image
         magick convert -resize $2% $1 resized$2_$1
+        echo "Image resized to $2%"
 fi
 
 
