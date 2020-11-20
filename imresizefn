@@ -43,7 +43,7 @@ if [ "${filetype}" = 1 ]; then
         echo "Error - Unknown filetype or bad filename. Try \"-h\" "
         exit 1
 
-#If absolutepath is given, reconstruct output filename
+#If absolutepath is given, convert and reconstruct output filename
 elif [[ "${1}" = /* ]]; then
         filename=$(basename -- "$1")
         dirname=$(dirname -- "$1")
