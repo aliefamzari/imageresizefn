@@ -2,7 +2,6 @@
 #Use imagemagick conversion to quickly resized image by percentage, and output on the same dir. No overwriting to original image. 
 #Author: Alif Amzari Mohd Azamee
 #ToDo - $2 input check
-
 function help {
         if [ -n "${1}" ]; then
               echo "${1}"
@@ -14,7 +13,7 @@ function help {
         Resize image in percentage of original image. Output filename
         will be in the format of resized[percentage]_[originalfilename].
 
-                -h      - print help and exit
+                -h      - print this help and exit
 
 EOF
         if [ -n "${1}" ]; then
@@ -23,16 +22,20 @@ EOF
         exit 0
 }
 
+#Display help when option -h is given, or exit out if invalid option is given
 if [ "${1}" == '-h' ]; then
         help
-elif [ "${1:0:1}" == '' ]; then
-        echo "Error: Unknown option $1. Try \"-h\" "
+elif [ "${1:0:1}" == '-' ]; then
+        echo "Error: Unknown option $1. Try \"-h\"."
         exit 0
 fi
 
+#Check $1 and $2 if null value and exit script
+[ -z "$1" ] || [ -z "$2" ] && echo "Must given filename and percentage to resize. Try \"-h\" for help." && exit
+
 #Check if imagemagick is install
 if [ ! "$(command -v magick)" ]; then
-            echo "Could not find Imagemagick. Kindly install it from your package manager"
+        echo "Could not find Imagemagick. Kindly install it from your package manager"
         exit 1
 fi
 
@@ -42,9 +45,16 @@ filetype=$(echo $?)
 if [ "${filetype}" = 1 ]; then
         echo "Error - Unknown filetype or bad filename. Try \"-h\" "
         exit 1
+fi
+
+#Check if $2 is integer only
+if ! [[ "${2}" =~ ^[0-9]+$ ]]; then
+        echo "Invalid percentage value. Try \"-h\" for help"
+        exit 0 
+fi
 
 #If absolutepath is given, convert and reconstruct output filename
-elif [[ "${1}" = /* ]]; then
+if [[ "${1}" = /* ]]; then
         filename=$(basename -- "$1")
         dirname=$(dirname -- "$1")
         extension="${filename##*.}"
