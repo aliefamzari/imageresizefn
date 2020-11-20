@@ -32,7 +32,7 @@ fi
 
 #Check if imagemagick is install
 if [ ! "$(command -v magick)" ]; then
-            echo "Could not find Imagemagick. Kindly install from your package manager"
+            echo "Could not find Imagemagick. Kindly install it from your package manager"
         exit 1
 fi
 
